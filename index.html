@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thiệp bay tim + 19 ảnh + Lời yêu 💖</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+
+html, body {
+  width:100%; height:100%;
+  overflow:hidden;
+  font-family: Arial, sans-serif;
+  background:#000;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+/* Nền */
+.bg-transition {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  background: radial-gradient(circle at center,#ffd1dc,#ff9acb,#ff5f9e);
+  opacity:0; transition: opacity 2.5s; z-index:1;
+}
+.bg-transition.show {opacity:1;}
+
+/* Thiệp */
+.card {
+  width: 300px;
+  max-width:90vw;
+  height: 180px;
+  max-height:50vh;
+  background:#fff;
+  border-radius:14px;
+  cursor:pointer;
+  z-index:10;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  position:relative;
+  margin-bottom:20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.card h2 {
+  color:#e91e63;
+  font-size:1.2rem;
+  text-align:center;
+}
+
+/* Tim CSS */
+.heart {
+  position:absolute;
+  bottom:-10%;
+  width:2.5vw; height:2.5vw;
+  background:red;
+  transform:rotate(-45deg);
+  animation:flyHeart 6s linear forwards;
+  pointer-events:none;
+  z-index:5;
+}
+.heart::before,.heart::after {
+  content:'';
+  position:absolute;
+  width:2.5vw; height:2.5vw;
+  background:red;
+  border-radius:50%;
+}
+.heart::before { top:-1.25vw; left:0; }
+.heart::after { left:1.25vw; top:0; }
+
+/* Ảnh bay */
+.fly-img {
+  position:absolute;
+  bottom:-15%;
+  border-radius:50%;
+  object-fit:cover;
+  pointer-events:none;
+  z-index:6;
+  width:10vw; height:10vw;
+  animation:flyImg 10s linear forwards;
+}
+
+/* Keyframes */
+@keyframes flyHeart {
+  0% { transform: translateY(0) rotate(-45deg) scale(1); opacity:0; }
+  15% { opacity:1; }
+  100% { transform: translateY(-120vh) rotate(-45deg) scale(1.5); opacity:0; }
+}
+@keyframes flyImg {
+  0% { transform: translateY(0) scale(1); opacity:0; }
+  15% { opacity:1; }
+  100% { transform: translateY(-120vh) scale(1.5); opacity:0; }
+}
+
+/* Lời yêu tỏ tình */
+.love-text {
+  position:relative;
+  font-size:2rem;
+  color:#fff;
+  text-align:center;
+  z-index:20;
+  white-space:nowrap;
+  overflow:hidden;
+  text-shadow: 2px 2px 4px #000;
+  font-weight:bold;
+}
+.love-text.typing::after {
+  content:"|";
+  display:inline-block;
+  margin-left:2px;
+  animation:blink 1s infinite;
+}
+@keyframes blink {
+  0%,50%,100% {opacity:1;}
+  25%,75% {opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-transition" id="bg"></div>
+<div class="card" id="card"><h2>💌 Nhấn để mở thiệp</h2></div>
+<div class="love-text" id="loveText"></div>
+<audio id="music" src="y5.mp3"></audio>
+
+<script>
+const card = document.getElementById("card");
+const bg = document.getElementById("bg");
+const music = document.getElementById("music");
+const loveText = document.getElementById("loveText");
+
+const TOTAL_IMAGES = 19;
+let currentIndex = 1;
+let opened = false;
+
+const MAX_HEARTS = 15;
+const MAX_IMAGES = 8;
+let hearts = [];
+let images = [];
+
+// Các câu tỏ tình
+const sentences = [
+  "Anh yêu em rất nhiều ❤️",
+  "Mỗi ngày bên em đều hạnh phúc 💕",
+  "Em là thế giới của anh 🌎",
+  "Anh muốn nắm tay em mãi mãi 🤝",
+  "Mỗi nụ cười của em làm anh tan chảy 😍"
+];
+
+card.addEventListener("click", () => {
+  if(opened) return;
+  opened = true;
+
+  music.play().catch(()=>console.log('Audio bị chặn'));
+
+  // Ẩn thiệp ngay
+  card.style.opacity="0";
+  card.style.transform="scale(0.8)";
+  setTimeout(()=>card.remove(),600);
+
+  // Delay 5s trước khi hiện nền
+  setTimeout(()=>{
+    bg.classList.add("show");
+
+    // Tim bay
+    setInterval(()=> {
+      if(hearts.length >= MAX_HEARTS) return;
+      const heart = document.createElement("div");
+      heart.className="heart";
+      heart.style.left = Math.random()*92+"vw";
+      document.body.appendChild(heart);
+      hearts.push(heart);
+      setTimeout(()=>{
+        heart.remove();
+        hearts.splice(hearts.indexOf(heart),1);
+      },6000);
+    }, 500);
+
+    // Ảnh bay
+    setInterval(()=> {
+      if(images.length >= MAX_IMAGES) return;
+      const img = document.createElement("img");
+      img.className="fly-img";
+      img.src = `img/em${currentIndex}.png`;
+      img.style.left = Math.random()*90+"vw";
+      document.body.appendChild(img);
+      images.push(img);
+      setTimeout(()=>{
+        img.remove();
+        images.splice(images.indexOf(img),1);
+      },10000);
+
+      currentIndex++;
+      if(currentIndex > TOTAL_IMAGES) currentIndex = 1;
+    }, 1500);
+
+    // Delay thêm 3s trước khi gõ chữ
+    setTimeout(()=>{
+
+      let sentenceIndex = 0;
+      function typeSentence() {
+        if(sentenceIndex >= sentences.length) return;
+        const text = sentences[sentenceIndex];
+        let i = 0;
+        loveText.textContent = "";
+        loveText.classList.add("typing"); // bật con trỏ
+
+        function typeChar() {
+          if(i < text.length){
+            loveText.textContent += text[i];
+            i++;
+            setTimeout(typeChar, 100);
+          } else {
+            loveText.classList.remove("typing"); // tắt con trỏ sau khi xong câu
+            sentenceIndex++;
+            setTimeout(typeSentence, 1500);
+          }
+        }
+        typeChar();
+      }
+      typeSentence();
+
+    },3000); // 3s delay sau khi nền hiện
+
+  },5000); // 5s delay trước khi mở nền
+});
+</script>
+
+</body>
+</html>
